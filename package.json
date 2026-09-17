@@ -1,0 +1,10 @@
+{
+  "name": "bot-desk",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Bot Desk — public blotter for the Robinhood agentic trading desk.",
+  "scripts": {
+    "start": "python3 server.py",
+    "dev": "python3 server.py"
+  }
+}
