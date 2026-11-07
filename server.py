@@ -81,10 +81,11 @@ class Handler(SimpleHTTPRequestHandler):
         self.wfile.write(body)
 
     def _send_watchlist_json(self):
-        from nellis.google_sign_in import watchlist_status_json
+        from nellis.google_sign_in import watchlist_status
 
-        body = watchlist_status_json().encode("utf-8")
-        self.send_response(401)
+        payload = watchlist_status()
+        body = json.dumps(payload, indent=2).encode("utf-8")
+        self.send_response(200 if payload.get("ok") else 401)
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
