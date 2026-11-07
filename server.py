@@ -26,6 +26,15 @@ class Handler(SimpleHTTPRequestHandler):
         if parsed.path == "/nellis.json":
             self._send_nellis_json(parsed)
             return
+        if parsed.path == "/nellis/watchlist":
+            self._send_watchlist_page()
+            return
+        if parsed.path == "/nellis/watchlist.json":
+            self._send_watchlist_json()
+            return
+        if parsed.path == "/nellis/google":
+            self._send_google_prompt()
+            return
         super().do_GET()
 
     def _nellis_payload(self, parsed):
@@ -60,6 +69,45 @@ class Handler(SimpleHTTPRequestHandler):
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
         self.wfile.write(body)
+
+    def _send_watchlist_page(self):
+        from nellis.google_sign_in import render_watchlist_page
+
+        body = render_watchlist_page().encode("utf-8")
+        self.send_response(200)
+        self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+    def _send_watchlist_json(self):
+        from nellis.google_sign_in import watchlist_status_json
+
+        body = watchlist_status_json().encode("utf-8")
+        self.send_response(401)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+    def _send_google_prompt(self):
+        from nellis.connector import NellisError
+        from nellis.google_sign_in import fresh_google_prompt_url
+
+        try:
+            target = fresh_google_prompt_url()
+        except NellisError as exc:
+            body = str(exc).encode("utf-8")
+            self.send_response(502)
+            self.send_header("Content-Type", "text/plain; charset=utf-8")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
+        self.send_response(302)
+        self.send_header("Location", target)
+        self.send_header("Content-Length", "0")
+        self.end_headers()
 
     def end_headers(self):
         self.send_header("Cache-Control", "no-store")

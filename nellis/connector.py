@@ -121,7 +121,7 @@ def render_lots_page(payload):
 <body>
   <main>
     <h1>Nellis Auction — public lots</h1>
-    <p class="meta">Read-only check. This page is separate from the Bot Desk blotter at <a href="/">/</a>. JSON: <a href="/nellis.json">/nellis.json</a>.</p>
+    <p class="meta">Read-only check. This page is separate from the Bot Desk blotter at <a href="/">/</a>. JSON: <a href="/nellis.json">/nellis.json</a>. Watch list: <a href="/nellis/watchlist">Google sign-in</a>.</p>
     {body}
   </main>
 </body>
